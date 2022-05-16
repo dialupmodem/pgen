@@ -24,7 +24,7 @@ export default class JsonPropertyModel {
 
     replacements.type.forEach(t => {
       if (this.propertyType.match(t.pattern)) {
-        this.targetType = this.targetType.replace(t.pattern, t.replacement)
+        this.targetType = this.propertyType.replace(t.pattern, t.replacement)
       }
     })
   }
