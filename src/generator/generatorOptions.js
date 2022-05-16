@@ -1,8 +1,12 @@
+import replacements from './replacements'
+
 const options = {
   className: 'UnknownModel',
   defaultType: 'object',
   baseClassName: 'ModelBase',
   useBaseClass: true,
+  replacements: replacements,
+  replacementMode: null,
   templateFunctions: {
     className: (pocoModel) => {
       let className = pocoModel.formattedName

@@ -27,5 +27,14 @@ export default class JsonPropertyModel {
         this.targetType = this.propertyType.replace(t.pattern, t.replacement)
       }
     })
+
+    if (this.targetType == 'object') {
+      replacements.objects.forEach(r => {
+        let propertyRegex = new RegExp(r.pattern)
+        if (this.propertyName.match(propertyRegex)) {
+          this.targetType = this.propertyName.replace(propertyRegex, r.replacement)
+        }
+      })
+    }
   }
 }

@@ -8,7 +8,8 @@ const replacements = {
   type: [
     { pattern: /number/, replacement: 'int' },
     { pattern: /string/, replacement: 'string' }
-  ]
+  ],
+  objects: []
 }
 
 export default replacements
