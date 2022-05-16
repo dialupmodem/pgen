@@ -5,12 +5,12 @@ export default class PocoModel {
     this.className = className
     this.json = JSON.parse(json)
     this.options = options
-    
+
     this._setName()
     this._setProperties()
   }
   _setName() {
-    this.formattedName = this.options.defaultClassName
+    this.formattedName = this.options.className
   }
   _setProperties() {
     this.jsonProperties = []
