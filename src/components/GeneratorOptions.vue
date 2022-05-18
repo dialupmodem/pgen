@@ -31,7 +31,7 @@
           @clearOptions="clearTypeReplacements">
         </KeyValueOption>
         <KeyValueOption header="Object Mapping"
-          description="Replace object types with complex types based on patterns below" keyLabel="Pattern"
+          description="Replace object types with complex types based on patterns below. An empty string will remove matching properties completely." keyLabel="Pattern"
           valueLabel="Replacement" :optionsCollection="objectReplacements" @addOption="addObjectMapping"
           @clearOptions="clearObjectMappings">
         </KeyValueOption>
@@ -61,7 +61,6 @@ code {
 
 <script>
 import KeyValueOption from "./KeyValueOption.vue"
-import options from "../generator/generatorOptions"
 
 export default {
   name: "GeneratorOptions",
@@ -118,10 +117,7 @@ export default {
       }
     },
     optionsChange() {
-      options.className = this.className;
-      options.baseClassName = this.baseClassName;
-      options.useBaseClass = this.useBaseClass;
-      this.$emit("optionsChange", this.options);
+      this.$emit("optionsChange", this.localOptions);
     }
   },
   mounted() {

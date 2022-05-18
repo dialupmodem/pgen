@@ -4,37 +4,87 @@ export default class JsonPropertyModel {
   constructor(property, options) {
     Object.assign(this, property)
 
-    this.propertyType = typeof(this.propertyValue)
+    this.propertyType = typeof (this.propertyValue)
     this.options = options
+    this.json = JSON.parse(options.userJson)
 
     this._setFormattedName()
     this._setTargetType()
   }
   _setFormattedName() {
-    this.formattedPropertyName = this.propertyName
+    this.formattedPropertyName = this._processReplacements(replacements.name, this.propertyName)
+    if (!this.formattedPropertyName) {
+      this.formattedPropertyName = this.propertyName
+    }
+  }
+  _createReplacementOption(replacementEntry) {
+    return {
+      pattern: new RegExp(replacementEntry.key),
+      replacement: replacementEntry.value
+    }
+  }
+  _processReplacements(replacementCollection, target) {
+    let result = null
 
-    replacements.name.forEach(n => {
-      if (this.propertyName.match(n.pattern)) {
-        this.formattedPropertyName = this.formattedPropertyName.replace(n.pattern, n.replacement)
+    replacementCollection.forEach(replacementEntry => {
+      let { pattern, replacement } = {
+        ...this._createReplacementOption(replacementEntry)
+      }
+
+      if (target.match(pattern)) {
+        result = target.replace(pattern, replacement)
       }
     })
+
+    return result
+  }
+  _processDynamicReplacements(replacementCollection, target) {
+    let result = null
+
+    replacementCollection.forEach(replacementEntry => {
+      let { pattern, replacement } = {
+        ...this._createReplacementOption(replacementEntry)
+      }
+
+      let targetPattern = pattern
+      let typePattern = replacement
+
+      let targetMatch = target.match(targetPattern)
+      if (targetMatch) {
+        let typeSearch = target.replace(targetPattern, typePattern)
+      
+        let typeMatch = Object.keys(this.json)
+          .find(k => {
+            console.log(`k: ${k} typeSearch: ${typeSearch} isMatch: ${k.match(typeSearch)}`)
+            return k.match(typeSearch)
+          })
+
+        if (typeMatch) {
+          result = this.json[typeMatch]
+        }
+      }
+    })
+
+    return result
   }
   _setTargetType() {
-    this.targetType = this.options.defaultType
-
-    replacements.type.forEach(t => {
-      if (this.propertyType.match(t.pattern)) {
-        this.targetType = this.propertyType.replace(t.pattern, t.replacement)
-      }
-    })
+    this.targetType = this._processReplacements(replacements.type, this.propertyType)
+    if (!this.targetType) {
+      this.targetType = this.options.defaultType
+    }
 
     if (this.targetType == 'object') {
-      replacements.objects.forEach(r => {
-        let propertyRegex = new RegExp(r.pattern)
-        if (this.propertyName.match(propertyRegex)) {
-          this.targetType = this.propertyName.replace(propertyRegex, r.replacement)
-        }
-      })
+      let dynamicReplacement = this._processDynamicReplacements(replacements.dynamic, this.propertyName)
+      if (dynamicReplacement) {
+        this.targetType = dynamicReplacement
+      }
+
+      let objectReplacement = this._processReplacements(replacements.objects, this.propertyName)
+      if (objectReplacement) {
+        [
+          this.targetType = objectReplacement
+        ]
+      }
     }
   }
 }

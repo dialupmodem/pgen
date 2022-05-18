@@ -7,6 +7,7 @@ const options = {
   useBaseClass: true,
   replacements: replacements,
   replacementMode: null,
+  userJson: JSON.parse("{ \"test\" : 1 }"),
   templateFunctions: {
     className: (pocoModel) => {
       let className = pocoModel.formattedName
