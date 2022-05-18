@@ -11,6 +11,7 @@ export default class JsonPropertyModel {
     this._setFormattedName()
     this._setTargetType()
   }
+
   _setFormattedName() {
     this.formattedPropertyName = this._processReplacements(replacements.name, this.propertyName)
     if (!this.formattedPropertyName) {
@@ -55,7 +56,6 @@ export default class JsonPropertyModel {
       
         let typeMatch = Object.keys(this.json)
           .find(k => {
-            console.log(`k: ${k} typeSearch: ${typeSearch} isMatch: ${k.match(typeSearch)}`)
             return k.match(typeSearch)
           })
 
@@ -67,6 +67,12 @@ export default class JsonPropertyModel {
 
     return result
   }
+  _setDynamicName() {
+    if (this.options.complexNamePattern) {
+      let targetTypeRegex = new RegExp(`(${this.targetType})`)
+      this.targetType = this.targetType.replace(targetTypeRegex, this.options.complexNamePattern)
+    }
+  }
   _setTargetType() {
     this.targetType = this._processReplacements(replacements.type, this.propertyType)
     if (!this.targetType) {
@@ -77,13 +83,12 @@ export default class JsonPropertyModel {
       let dynamicReplacement = this._processDynamicReplacements(replacements.dynamic, this.propertyName)
       if (dynamicReplacement) {
         this.targetType = dynamicReplacement
+        this._setDynamicName()
       }
 
       let objectReplacement = this._processReplacements(replacements.objects, this.propertyName)
       if (objectReplacement) {
-        [
           this.targetType = objectReplacement
-        ]
       }
     }
   }

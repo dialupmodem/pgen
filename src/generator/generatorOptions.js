@@ -5,9 +5,10 @@ const options = {
   defaultType: 'object',
   baseClassName: 'ModelBase',
   useBaseClass: true,
+  complexNamePattern: '$1Model',
   replacements: replacements,
   replacementMode: null,
-  userJson: JSON.parse("{ \"test\" : 1 }"),
+  userJson: "{ \"test\" : 1 }",
   templateFunctions: {
     className: (pocoModel) => {
       let className = pocoModel.formattedName

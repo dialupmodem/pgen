@@ -13,6 +13,10 @@
           </InputText>
         </div>
         <div class="field col-12">
+          <label for="complexNamePattern"></label>
+          <InputText id="complexNamePattern" @change="optionsChange" v-model="localOptions.complexNamePattern"></InputText>
+        </div>
+        <div class="field col-12">
           <label for="baseClassName">Base Class Name</label>
           <InputText id="baseClassName"
             class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
@@ -26,6 +30,7 @@
             <InputSwitch v-model="localOptions.useBaseClass" @change="optionsChange"></InputSwitch>
           </div>
         </div>
+        
         <KeyValueOption header="Type Replacmenent" description="Replace JSON types with target types" keyLabel="Pattern"
           valueLabel="Replacement" :optionsCollection="typeReplacements" @addOption="addTypeReplacement"
           @clearOptions="clearTypeReplacements">
@@ -74,6 +79,7 @@ export default {
         className: null,
         baseClassName: null,
         useBaseClass: null,
+        complexNamePattern: null,
         replacements: {
           type: [],
           objects: [],
