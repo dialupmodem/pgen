@@ -1,15 +1,16 @@
 const replacements = {
   name: [
-    { pattern: /_de/, replacement: 'De' },
-    { pattern: /_en/, replacement: 'En' },
-    { pattern: /_fr/, replacement: 'Fr' },
-    { pattern: /_ja/, replacement: 'Ja' }
+    { key: /_de/, value: 'De' },
+    { key: /_en/, value: 'En' },
+    { key: /_fr/, value: 'Fr' },
+    { key: /_ja/, value: 'Ja' }
   ],
   type: [
-    { pattern: /number/, replacement: 'int' },
-    { pattern: /string/, replacement: 'string' }
+    { key: /number/, value: 'int' },
+    { key: /string/, value: 'string' }
   ],
-  objects: []
+  objects: [],
+  dynamic: []
 }
 
 export default replacements

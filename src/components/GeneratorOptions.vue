@@ -7,7 +7,7 @@
       <div class="formgrid grid">
         <div class="field col-12">
           <label for="className">Class Name</label>
-          <InputText id="className" v-model="className"
+          <InputText id="className" v-model="localOptions.className"
             class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
             @change="optionsChange">
           </InputText>
@@ -16,45 +16,34 @@
           <label for="baseClassName">Base Class Name</label>
           <InputText id="baseClassName"
             class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
-            @change="optionsChange" v-model="baseClassName"></InputText>
+            @change="optionsChange" v-model="localOptions.baseClassName"></InputText>
         </div>
         <div class="field col-12 grid mb-5">
           <div class="col-2" style="width: 125px; padding-top: 0.25rem;">
             Use Base Class
           </div>
           <div class="col-1">
-            <InputSwitch v-model="useBaseClass" @change="optionsChange"></InputSwitch>
+            <InputSwitch v-model="localOptions.useBaseClass" @change="optionsChange"></InputSwitch>
           </div>
         </div>
-        <h4>Object Mapping</h4>
-        <div class="field col-12 mb-5">
-          Used to configure what complex types should map to instead of a generic object. Items added to the list below
-          will be included or excluded depending on the mode selected.
-        </div>
-        
-        <div class="field col-12 grid">
-          <div class="col-fixed" style="width: 225px;">
-            <label for="addPattern">Pattern</label>
-            <InputText id="addPattern" v-model="addPattern"></InputText>
-          </div>
-          <div class="col-fixed" style="width: 225px;">
-            <label for="addReplacement">Replacement</label>
-            <InputText id="addReplacement" v-model="addReplacement"></InputText>
-          </div>
-          <div class="col-fixed" style="align-self: end;">
-            <Button label="Add" style="width: 80px;" @click="addTypeMapping"></Button>
-          </div>
-          <div class="col-1" style="align-self: end; justify-self: end;">
-            <Button label="Clear All" @click="clearMapping"></Button>
-          </div>
-        </div>
-        <div class="field col-6">
-          <DataTable :value="objectReplacements" responsiveLayout="scroll">
-            <column field="pattern" header="Pattern"></column>
-            <Column field="replacement" header="Replacement"></Column>
-          </DataTable>
-        </div>
+        <KeyValueOption header="Type Replacmenent" description="Replace JSON types with target types" keyLabel="Pattern"
+          valueLabel="Replacement" :optionsCollection="typeReplacements" @addOption="addTypeReplacement"
+          @clearOptions="clearTypeReplacements">
+        </KeyValueOption>
+        <KeyValueOption header="Object Mapping"
+          description="Replace object types with complex types based on patterns below" keyLabel="Pattern"
+          valueLabel="Replacement" :optionsCollection="objectReplacements" @addOption="addObjectMapping"
+          @clearOptions="clearObjectMappings">
+        </KeyValueOption>
+        <KeyValueOption header="Dynamic Mapping"
+          description="Replace object types when target type is the value of another property"
+          keyLabel="Target Property Pattern" valueLabel="Type Property Pattern"
+          :optionsCollection="dynamicReplacements" @addOption="addDynamicMapping"
+          @clearOptions="clearDynamicMappings">
+        </KeyValueOption>
+
       </div>
+
     </template>
   </Card>
 </template>
@@ -63,68 +52,105 @@
 .field {
   text-align: left;
 }
+
+.pre,
+code {
+  white-space: pre-line
+}
 </style>
 
 <script>
+import KeyValueOption from "./KeyValueOption.vue"
 import options from "../generator/generatorOptions"
 
 export default {
-  name: 'GeneratorOptions',
+  name: "GeneratorOptions",
   props: {
     options: Object
   },
+  components: { KeyValueOption },
   data() {
     return {
-      className: this.options.className,
-      baseClassName: this.options.baseClassName,
-      useBaseClass: this.options.useBaseClass,
-      objectReplacements: this.options.replacements.objects,
-      replacementMode: this.options.replacementMode,
-      addPattern: null,
-      addReplacement: null,
-      replacementOptions: [
-        'Allow',
-        'Deny'
-      ]
+      localOptions: {
+        className: null,
+        baseClassName: null,
+        useBaseClass: null,
+        replacements: {
+          type: [],
+          objects: [],
+          dynamic: []
+        }
+      }
     }
   },
   methods: {
-    addTypeMapping() {
-      if (!this.addPattern) {
-        return
-      }
-
-      let typeMapping = this.objectReplacements
-        .find(r => r.pattern == this.addPattern)
-
-      if (!typeMapping) {
-        typeMapping = {}
-      }
-
-      typeMapping.pattern = this.addPattern
-      typeMapping.replacement = this.addReplacement
-
-      let typeMappingIndex = this.objectReplacements.findIndex(r => r.pattern == typeMapping.pattern)
-      if (!(typeMappingIndex >= 0)) {
-        console.log('test')
-        this.objectReplacements.push(typeMapping)
-      }
-      else {
-        this.objectReplacements = this.objectReplacements.splice(typeMappingIndex, 1, typeMapping)
-      }
-
-      this.addPattern = null
-      this.addReplacement = null
+    addTypeReplacement(eventOption) {
+      this.addOption(this.typeReplacements, eventOption)
     },
-    clearMapping() {
+    addObjectMapping(eventOption) {
+      this.addOption(this.objectReplacements, eventOption)
+    },
+    addDynamicMapping(eventOption) {
+      this.addOption(this.dynamicReplacements, eventOption)
+    },
+    clearTypeReplacements() {
+      this.typeReplacements = []
+    },
+    clearObjectMappings() {
       this.objectReplacements = []
     },
-    optionsChange() {
-      options.className = this.className
-      options.baseClassName = this.baseClassName
-      options.useBaseClass = this.useBaseClass
+    clearDynamicMappings() {
+      this.dynamicReplacements = []
+    },
+    addOption(optionsCollection, eventOption) {
+      if (!optionsCollection) {
+        return
+      }
+      let option = { ...eventOption }
+      let optionIndex = optionsCollection.findIndex(o => o.key == eventOption.key)
+      let hasOption = optionIndex >= 0
 
-      this.$emit('optionsChange', this.options)
+      if (!hasOption) {
+        optionsCollection.push(option)
+      }
+      else {
+        optionsCollection.splice(optionIndex, 1, option)
+      }
+    },
+    optionsChange() {
+      options.className = this.className;
+      options.baseClassName = this.baseClassName;
+      options.useBaseClass = this.useBaseClass;
+      this.$emit("optionsChange", this.options);
+    }
+  },
+  mounted() {
+    Object.assign(this.localOptions, this.options)
+  },
+  computed: {
+    typeReplacements: {
+      get() {
+        return this.localOptions.replacements.type
+      },
+      set(newValue) {
+        this.localOptions.replacements.type = newValue
+      }
+    },
+    objectReplacements: {
+      get() {
+        return this.localOptions.replacements.objects
+      },
+      set(newValue) {
+        this.localOptions.replacements.objects = newValue
+      },
+    },
+    dynamicReplacements: {
+      get() {
+        return this.localOptions.replacements.dynamic
+      },
+      set(newValue) {
+        this.localOptions.replacements.dynamic = newValue
+      }
     }
   }
 }
