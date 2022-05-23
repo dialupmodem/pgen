@@ -1,30 +1,30 @@
 <template>
-  <div class="col-12 grid">
+  <div v-if="keyValueOption" class="col-12 grid">
     <h4>{{ header }}</h4>
     <div class="field col-12 mb-5">
       {{ description }}
     </div>
     <div class="field col-12 grid">
-      <div class="col-fixed" style="width: 225px;">
-        <label for="optionKey">{{ keyLabel }}</label>
+      <div class="col-fixed" style="width: 225px">
+        <label for="optionKey">{{ optionKeyLabel }}</label>
         <InputText id="optionKey" v-model="userInput.key"></InputText>
       </div>
-      <div class="col-fixed" style="width: 225px;">
-        <label for="optionValue">{{ valueLabel }}</label>
+      <div class="col-fixed" style="width: 225px">
+        <label for="optionValue">{{ optionValueLabel }}</label>
         <InputText id="valueKey" v-model="userInput.value"></InputText>
       </div>
-      <div class="col-fixed" style="align-self: end;">
-        <Button label="Add" style="width: 80px;" @click="addOption"></Button>
+      <div class="col-fixed" style="align-self: end">
+        <Button label="Add" style="width: 80px" @click="optionChange"></Button>
       </div>
-      <div class="col-1" style="align-self: end; justify-self: end;">
+      <div class="col-1" style="align-self: end; justify-self: end">
         <Button label="Clear All" @click="clearOptions"></Button>
       </div>
     </div>
     <div class="col-12 grid">
       <div class="field col-6">
-        <DataTable :value="optionsCollection" responsive-layout="scroll">
-          <Column field="key" :header="keyLabel"></Column>
-          <Column field="value" :header="valueLabel"></Column>
+        <DataTable :value="values" responsive-layout="scroll">
+          <Column field="key" :header="optionKeyLabel"></Column>
+          <Column field="value" :header="optionValueLabel"></Column>
         </DataTable>
       </div>
     </div>
@@ -34,32 +34,50 @@
 <script>
 
 export default {
-  name: 'KeyValueOption',
+  name: "KeyValueOption",
   props: {
-    header: String,
-    description: String,
-    keyLabel: String,
-    valueLabel: String,
-    optionsCollection: Array
+    keyValueOption: Object,
   },
+  emits: ["optionChange"],
   data() {
     return {
       userInput: {
         key: null,
-        value: null
+        value: null,
       },
-    }
+    };
   },
   methods: {
-    addOption() {
-      this.$emit('addOption', { key: this.userInput.key, value: this.userInput.value })
-      
-      this.userInput.key = null
-      this.userInput.value = null
+    optionChange() {
+      this.$emit("optionChange", {
+        key: this.key,
+        userInputKey: this.userInput.key,
+        userInputValue: this.userInput.value,
+      });
     },
     clearOptions() {
-      this.$emit('clearOptions')
+      this.$emit("clearOptions");
+    },
+  },
+  computed: {
+    key() {
+      return this.keyValueOption?.key
+    },
+    header() {
+      return this.keyValueOption?.header
+    },
+    description() {
+      return this.keyValueOption?.description
+    },
+    optionKeyLabel() {
+      return this.keyValueOption?.optionKeyLabel
+    },
+    optionValueLabel() {
+      return this.keyValueOption?.optionValueLabel
+    },
+    values() {
+      return this.keyValueOption?.values
     }
   }
-}
+};
 </script>

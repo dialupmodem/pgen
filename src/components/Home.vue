@@ -2,7 +2,7 @@
   <div>
     <TabView :activeIndex="active" @tab-change="tabChange">
       <TabPanel header="Options">
-        <GeneratorOptions :options="options" @optionsChange="optionsChange"></GeneratorOptions>
+        <UserOptions :options="options" @optionsChange="optionsChange"></UserOptions>
       </TabPanel>
       <TabPanel header="JSON">
         <Textarea v-model="options.userJson" @change="userJsonChange" rows="35" cols="200" style="width: 100%;"></Textarea>
@@ -14,19 +14,19 @@
   </div>
 </template>
 <script>
-import generatorOptions from '@/generator/generatorOptions'
 import PocoModel from '@/generator/PocoModel'
-import GeneratorOptions from './GeneratorOptions.vue'
+import GeneratorOptions from '../generator/_GeneratorOptions';
+import UserOptions from './UserOptions.vue'
 
 export default {
   name: "Home",
-  components: { GeneratorOptions },
+  components: { UserOptions },
   data() {
     return {
       active: 0,
       userJson: "{ \"test\" : 1 }",
       generatedCode: "",
-      options: generatorOptions,
+      options: null,
       pocoModel: null
     };
   },
@@ -46,7 +46,8 @@ export default {
       this.options = updatedOptions
     },
   },
-  mounted() {
+  beforeMount() {
+    this.options = new GeneratorOptions()
     window.setTestData = () => {
       this.options.userJson = `{
         "GameContentLinks": [

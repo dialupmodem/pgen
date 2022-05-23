@@ -2,8 +2,9 @@ import replacements from './replacements'
 
 const options = {
   className: 'UnknownModel',
+  classNameTemplate: '$1Model',
   defaultType: 'object',
-  baseClassName: 'ModelBase',
+  baseClass: 'ModelBase',
   useBaseClass: true,
   complexNamePattern: '$1Model',
   replacements: replacements,
