@@ -1,4 +1,3 @@
-import replacements from './replacements'
 
 export default class JsonPropertyModel {
   constructor(property, options) {
@@ -8,88 +7,36 @@ export default class JsonPropertyModel {
     this.options = options
     this.json = JSON.parse(options.userJson)
 
-    this._setFormattedName()
-    this._setTargetType()
+    this._processReplacements()
   }
 
-  _setFormattedName() {
-    this.formattedPropertyName = this._processReplacements(replacements.name, this.propertyName)
-    if (!this.formattedPropertyName) {
-      this.formattedPropertyName = this.propertyName
-    }
-  }
-  _createReplacementOption(replacementEntry) {
-    return {
-      pattern: new RegExp(replacementEntry.key),
-      replacement: replacementEntry.value
-    }
-  }
-  _processReplacements(replacementCollection, target) {
-    let result = null
+  _processReplacements() {
+    let nameReplacementOptions = this.options.userOptions.keyValue
+      .filter(o => o.target == 'name')
 
-    replacementCollection.forEach(replacementEntry => {
-      let { pattern, replacement } = {
-        ...this._createReplacementOption(replacementEntry)
-      }
+    if (nameReplacementOptions) {
+      let nameReplacementEntries = nameReplacementOptions.values
+      let nameResult = null
 
-      if (target.match(pattern)) {
-        result = target.replace(pattern, replacement)
-      }
-    })
+      nameReplacementEntries.forEach(r => {
+        nameResult = r.replace(this.propertyName, r.passJson ? this.options.userJson : null)
+      })
 
-    return result
-  }
-  _processDynamicReplacements(replacementCollection, target) {
-    let result = null
-
-    replacementCollection.forEach(replacementEntry => {
-      let { pattern, replacement } = {
-        ...this._createReplacementOption(replacementEntry)
-      }
-
-      let targetPattern = pattern
-      let typePattern = replacement
-
-      let targetMatch = target.match(targetPattern)
-      if (targetMatch) {
-        let typeSearch = target.replace(targetPattern, typePattern)
-      
-        let typeMatch = Object.keys(this.json)
-          .find(k => {
-            return k.match(typeSearch)
-          })
-
-        if (typeMatch) {
-          result = this.json[typeMatch]
-        }
-      }
-    })
-
-    return result
-  }
-  _setDynamicName() {
-    if (this.options.complexNamePattern) {
-      let targetTypeRegex = new RegExp(`(${this.targetType})`)
-      this.targetType = this.targetType.replace(targetTypeRegex, this.options.complexNamePattern)
-    }
-  }
-  _setTargetType() {
-    this.targetType = this._processReplacements(replacements.type, this.propertyType)
-    if (!this.targetType) {
-      this.targetType = this.options.defaultType
+      this.formattedPropertyName = nameResult ?? this.propertyName
     }
 
-    if (this.targetType == 'object') {
-      let dynamicReplacement = this._processDynamicReplacements(replacements.dynamic, this.propertyName)
-      if (dynamicReplacement) {
-        this.targetType = dynamicReplacement
-        this._setDynamicName()
-      }
+    let typeReplacementOptions = this.options.userOptions.keyValue
+      .filter(o => o.target == 'type')
 
-      let objectReplacement = this._processReplacements(replacements.objects, this.propertyName)
-      if (objectReplacement) {
-          this.targetType = objectReplacement
-      }
+    if (typeReplacementOptions) {
+      let typeReplacementEntries = typeReplacementOptions.values
+      let typeResult = null
+
+      typeReplacementEntries.forEach(r => {
+        typeResult = r.replace(this.targetType, r.passJson ? this.options.userJson : null)
+      })
+
+      this.targetType = typeResult ?? this.targetType
     }
   }
 }

@@ -1,29 +1,36 @@
 <template>
   <div>
-    <OptionsCard>
-      <template #header>General</template>
-      <div class="formgrid grid">
-        <OptionInput
-          v-for="userOption in localOptions.userOptions.generic"
-          :key="userOption.key"
-          :optionKey="userOption.key"
-          :optionValue="userOption.value"
-          :label="userOption.label"
-          :inputType="userOption.inputType"
-          @optionChange="updateOptions"
-        >
-          {{ userOption }}
-        </OptionInput>
-        <KeyValueOption
-          v-for="keyValueOption in localOptions.userOptions.keyValue"
-          :key="keyValueOption.key"
-          :keyValueOption="keyValueOption"
-          @optionChange="updateKeyValueOptions"
-        >
-        </KeyValueOption>
-        <KeyValueOption></KeyValueOption>
-      </div>
-    </OptionsCard>
+    <div class="mb-5">
+      <OptionsCard>
+        <template #header>General</template>
+        <div class="formgrid grid">
+          <OptionInput
+            v-for="userOption in localOptions.userOptions.generic"
+            :key="userOption.key"
+            :optionKey="userOption.key"
+            :optionValue="userOption.value"
+            :label="userOption.label"
+            :inputType="userOption.inputType"
+            @optionChange="updateOptions"
+          >
+          </OptionInput>
+        </div>
+      </OptionsCard>
+    </div>
+    <div
+      class="mb-5"
+      v-for="keyValueOption in localOptions.userOptions.keyValue"
+      :key="keyValueOption.key"
+    >
+      <OptionsCard>
+        <div class="formgrid grid">
+          <KeyValueOption
+            :keyValueOption="keyValueOption"
+            @optionChange="updateKeyValueOptions"
+          ></KeyValueOption>
+        </div>
+      </OptionsCard>
+    </div>
   </div>
 </template>
 
@@ -55,27 +62,6 @@ export default {
     };
   },
   methods: {
-    addTypeReplacement(eventOption) {
-      this.addOption(this.typeReplacements, eventOption);
-    },
-    addObjectMapping(eventOption) {
-      this.addOption(this.objectReplacements, eventOption);
-    },
-    addDynamicMapping(eventOption) {
-      this.addOption(this.dynamicReplacements, eventOption);
-    },
-    clearTypeReplacements() {
-      this.typeReplacements = [];
-    },
-    clearObjectMappings() {
-      this.objectReplacements = [];
-    },
-    clearDynamicMappings() {
-      this.dynamicReplacements = [];
-    },
-    changeClassName(className) {
-      this.localOptions.className = className;
-    },
     updateOptions(eventOption) {
       let { name, value } = { ...eventOption };
 
@@ -109,38 +95,9 @@ export default {
     optionsChange() {
       this.$emit("optionsChange", this.localOptions);
     },
-    testOptionChange(data) {
-      console.log(data);
-    },
   },
   beforeMount() {
     this.localOptions = this.options;
-  },
-  computed: {
-    typeReplacements: {
-      get() {
-        return this.localOptions.replacements.type;
-      },
-      set(newValue) {
-        this.localOptions.replacements.type = newValue;
-      },
-    },
-    objectReplacements: {
-      get() {
-        return this.localOptions.replacements.objects;
-      },
-      set(newValue) {
-        this.localOptions.replacements.objects = newValue;
-      },
-    },
-    dynamicReplacements: {
-      get() {
-        return this.localOptions.replacements.dynamic;
-      },
-      set(newValue) {
-        this.localOptions.replacements.dynamic = newValue;
-      },
-    },
   },
 };
 </script>

@@ -15,7 +15,7 @@
 </template>
 <script>
 import PocoModel from '@/generator/PocoModel'
-import GeneratorOptions from '../generator/_GeneratorOptions';
+import generatorOptions from '@/generator/generatorOptions';
 import UserOptions from './UserOptions.vue'
 
 export default {
@@ -47,7 +47,7 @@ export default {
     },
   },
   beforeMount() {
-    this.options = new GeneratorOptions()
+    this.options = generatorOptions
     window.setTestData = () => {
       this.options.userJson = `{
         "GameContentLinks": [
