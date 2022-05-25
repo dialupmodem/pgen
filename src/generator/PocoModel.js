@@ -1,10 +1,10 @@
 import JsonPropertyModel from './JsonPropertyModel'
 
 export default class PocoModel {
-  constructor(className, options) {
-    this.className = className
-    this.json = JSON.parse(options.userJson)
+  constructor(options) {
     this.options = options
+    this.className = this.options.userOptions.className
+    this.json = JSON.parse(this.options.userJson)
 
     this._setName()
     this._setProperties()

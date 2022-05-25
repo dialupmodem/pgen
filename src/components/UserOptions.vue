@@ -83,13 +83,13 @@ export default {
       }
 
       let newOption = { key: userInputKey, value: userInputValue };
-      let option = keyValueOption.values.find((o) => o.key === userInputKey);
+      let option = keyValueOption.userValues.find((o) => o.key === userInputKey);
 
       if (!option) {
-        keyValueOption.values.push(newOption);
+        keyValueOption.userValues.push(newOption);
       } else {
-        let optionIndex = keyValueOption.values.indexOf(option);
-        keyValueOption.values.splice(optionIndex, 1, newOption);
+        let optionIndex = keyValueOption.userValues.indexOf(option);
+        keyValueOption.userValues.splice(optionIndex, 1, newOption);
       }
     },
     optionsChange() {

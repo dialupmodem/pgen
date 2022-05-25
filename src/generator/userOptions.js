@@ -12,21 +12,20 @@ const genericReplacement = (target, replacementEntries) => {
   return result
 }
 
-const dynamicReplacement = (json, target, replacementEntries) => {
+const dynamicReplacement = (target, jsonProperty, replacementEntries) => {
   let result = target
 
   replacementEntries.forEach(replacementEntry => {
     let targetPattern = new RegExp(replacementEntry.key)
-    let typePattern = new RegExp(replacementEntry.value)
+    let typePattern = replacementEntry.value
 
-    let targetMatch = target.match(targetPattern)
-    if (targetMatch) {
-      let typeSearch = target.replace(targetPattern, typePattern)
-      let typeMatch = Object.keys(json)
-        .find(k => k.match(typeSearch))
+    let match = jsonProperty.formattedPropertyName.match(targetPattern)
+    if (match) {
+      let typePropertyName = jsonProperty.formattedPropertyName.replace(targetPattern, typePattern)
+      let typePropertyValue = jsonProperty.json[`${typePropertyName}`]
 
-      if (typeMatch) {
-        result = json[typeMatch]
+      if (typePropertyValue) {
+        result = typePropertyValue
       }
     }
   })
@@ -94,7 +93,7 @@ const userOptions = {
     {
       key: 'nameReplacement',
       header: 'Name Replacement',
-      description: 'Replace property names',
+      description: 'Replace property names, an empty replacement will remove the property completely',
       optionKeyLabel: 'Pattern',
       optionValueLabel: 'Replacement',
       userValues: [
@@ -107,7 +106,7 @@ const userOptions = {
         return genericReplacement(target, this.userValues)
       },
       target: 'name',
-      passJson: false
+      isComplex: false
     },
     {
       key: 'typeReplacement',
@@ -123,7 +122,7 @@ const userOptions = {
         return genericReplacement(target, this.userValues)
       },
       target: 'type',
-      passJson: false
+      isComplex: false
     },
     {
       key: 'objectReplacement',
@@ -136,7 +135,7 @@ const userOptions = {
         return genericReplacement(target, this.userValues)
       },
       target: 'type',
-      passJson: false
+      isComplex: false
     },
     {
       key: 'dynamicReplacement',
@@ -145,13 +144,14 @@ const userOptions = {
       optionKeyLabel: 'Target Property Pattern',
       optionValueLabel: 'Type Value Property Pattern',
       userValues: [],
-      replaceTarget: function (target, json) {
-        return dynamicReplacement(json, target, this.userValues)
+      replaceTarget: function (target, jsonProperty) {
+        return dynamicReplacement(target, jsonProperty, this.userValues)
       },
       target: 'type',
-      passJson: true
+      isComplex: true
     }
-  ]
+  ],
+
 }
 
 export default userOptions

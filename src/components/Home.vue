@@ -31,8 +31,7 @@ export default {
   },
   methods: {
     generateClass() {
-      this.pocoModel = new PocoModel("test", this.options)
-      console.log(this.pocoModel)
+      this.pocoModel = new PocoModel(this.options)
       this.generatedCode = this.classTemplate(this.pocoModel)
     },
     userJsonChange() {
@@ -140,6 +139,8 @@ export default {
         "Url": "/ChocoboTaxiStand/1179648"
       }`
     }
+    window.setTestData()
+    this.options.userOptions.keyValue.find(k => k.key == 'dynamicReplacement').userValues.push({key: '(TargetLocations\\d+)', value: '$1Target'})
   },
   computed: {
     classTemplate() {

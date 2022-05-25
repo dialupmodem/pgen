@@ -1,7 +1,7 @@
 const classNameTemplate = (pocoModel) => {
-  let className = pocoModel.formattedName
-  if (pocoModel.options.useBaseClass) {
-    className = `${className} : ${pocoModel.options.baseClassName}`
+  let className = pocoModel.className
+  if (pocoModel.options.userOptions.useBaseClass) {
+    className = `${className} : ${pocoModel.options.userOptions.baseClass}`
   }
   return className
 }
@@ -13,10 +13,13 @@ const propertyTemplate = (jsonPropertyModel) => {
 const templates = {
   class: (pocoModel) => {
     let properties = pocoModel.jsonProperties
+    if (properties)
+      properties = properties.filter(p => p.formattedPropertyName != 'null')
+    
     let propertyTemplateFunction = propertyTemplate
     let className = classNameTemplate(pocoModel)
 
-    let generatedClass = `public ${className} {\n`
+    let generatedClass = `public class ${className} {\n`
     generatedClass += `${properties?.map(p => { return `  ${propertyTemplateFunction(p)}\n` }).join('')}`
     generatedClass += '}'
 

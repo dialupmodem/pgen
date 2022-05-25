@@ -17,13 +17,18 @@ export default class JsonPropertyModel {
       .filter(o => o.target == 'name')
 
     if (nameReplacementOptions) {
-      let nameResult = null
+      let nameResult = this.propertyName
 
       nameReplacementOptions.forEach(r => {
-        nameResult = r.replaceTarget(this.propertyName, this.passJson ? this.json : null)
+        if (r.isComplex) {
+          nameResult = r.replaceTarget(nameResult, this)
+        }
+        else {
+          nameResult = r.replaceTarget(nameResult)
+        }
       })
 
-      this.formattedPropertyName = nameResult ?? this.propertyName
+      this.formattedPropertyName = nameResult
     }
 
     let typeReplacementOptions = this.options.userOptions.keyValue
@@ -33,7 +38,17 @@ export default class JsonPropertyModel {
       let typeResult = this.propertyType
 
       typeReplacementOptions.forEach(r => {
-        typeResult = r.replaceTarget(typeResult, this.passJson ? this.json : null)
+        if (r.isComplex) {
+          typeResult = r.replaceTarget(typeResult, this)
+
+          if (this.propertyType == 'object' && typeResult != 'object') {
+            let resultPattern = new RegExp(`(${typeResult})`)
+            typeResult = typeResult.replace(resultPattern, this.options.userOptions.complexPropertyTemplate)
+          }
+        }
+        else {
+          typeResult = r.replaceTarget(typeResult)
+        }
       })
 
       if (typeResult) {
