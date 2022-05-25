@@ -68,6 +68,7 @@ export default {
     },
     rawJsonChange() {
       this.options.userJson = JSON.parse(this.rawJson);
+      this.rawJson = JSON.stringify(this.options.userJson, null, 2);
       this.generateClass();
     },
     tabChange() {
@@ -91,7 +92,7 @@ export default {
         .then((json) => {
           if (json != null) {
             this.options.userJson = json;
-            this.rawJson = JSON.stringify(json);
+            this.rawJson = JSON.stringify(json, null, 2);
           }
         });
     },
