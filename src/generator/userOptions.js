@@ -1,19 +1,19 @@
 const genericReplacement = (target, replacementEntries) => {
-  let result = null
+  let result = target;
 
   replacementEntries.forEach(replacementEntry => {
     let pattern = new RegExp(replacementEntry.key)
 
-    if (target.match(pattern)) {
-      result = target.replace(pattern, replacementEntry.value)
+    if (result?.match(pattern)) {
+      result = result.replace(pattern, replacementEntry.value)
     }
-
-    return result
   })
+
+  return result
 }
 
 const dynamicReplacement = (json, target, replacementEntries) => {
-  let result = null
+  let result = target
 
   replacementEntries.forEach(replacementEntry => {
     let targetPattern = new RegExp(replacementEntry.key)
@@ -23,10 +23,10 @@ const dynamicReplacement = (json, target, replacementEntries) => {
     if (targetMatch) {
       let typeSearch = target.replace(targetPattern, typePattern)
       let typeMatch = Object.keys(json)
-      .find(k => k.match(typeSearch))
+        .find(k => k.match(typeSearch))
 
       if (typeMatch) {
-        result = this.json[typeMatch]
+        result = json[typeMatch]
       }
     }
   })
@@ -35,11 +35,60 @@ const dynamicReplacement = (json, target, replacementEntries) => {
 }
 
 const userOptions = {
+  getValue: function (key) {
+    let option = this.generic.find(g => g.key == key)
+    if (!option) {
+      return null
+    }
+
+    return option.value
+  },
+  get className() {
+    return this.getValue('className')
+  },
+  get complexPropertyTemplate() {
+    return this.getValue('complexPropertyTemplate')
+  },
+  get baseClass() {
+    return this.getValue('baseClass')
+  },
+  get useBaseClass() {
+    return this.getValue('useBaseClass')
+  },
+  get defaultComplexType() {
+    return this.getValue('defaultComplexType')
+  },
   generic: [
-    { key: 'className', value: 'UnknownModel', label: 'Class Name', inputType: 'text' },
-    { key: 'complexPropertyTemplate', value: '$1Model', label: 'Complex Property Template', inputType: 'text' },
-    { key: 'baseClass', value: 'ModelBase', label: 'Base Class Name', inputType: 'text' },
-    { key: 'useBaseClass', value: true, label: 'Use Base Class', inputType: 'switch' }
+    {
+      key: 'className',
+      value: 'UnknownModel',
+      label: 'Class Name',
+      inputType: 'text'
+    },
+    {
+      key: 'complexPropertyTemplate',
+      value: '$1Model',
+      label: 'Complex Property Template',
+      inputType: 'text'
+    },
+    {
+      key: 'baseClass',
+      value: 'ModelBase',
+      label: 'Base Class Name',
+      inputType: 'text'
+    },
+    {
+      key: 'useBaseClass',
+      value: true,
+      label: 'Use Base Class',
+      inputType: 'switch'
+    },
+    {
+      key: 'defaultComplexType',
+      value: 'object',
+      label: 'Default Complex Type',
+      inputType: 'text'
+    }
   ],
   keyValue: [
     {
@@ -48,14 +97,14 @@ const userOptions = {
       description: 'Replace property names',
       optionKeyLabel: 'Pattern',
       optionValueLabel: 'Replacement',
-      values: [
+      userValues: [
         { key: '_de', value: 'De' },
         { key: '_en', value: 'En' },
         { key: '_fr', value: 'Fr' },
         { key: '_ja', value: 'Ja' }
       ],
-      replace: function(target) {
-        genericReplacement(target, this.values)
+      replaceTarget: function (target) {
+        return genericReplacement(target, this.userValues)
       },
       target: 'name',
       passJson: false
@@ -66,12 +115,12 @@ const userOptions = {
       description: 'Replace JSON types with target types',
       optionKeyLabel: 'Pattern',
       optionValueLabel: 'Replacement',
-      values: [
+      userValues: [
         { key: 'number', value: 'int' },
         { key: 'string', value: 'string' }
       ],
-      replace: function (target) {
-        genericReplacement(target, this.values)
+      replaceTarget: function (target) {
+        return genericReplacement(target, this.userValues)
       },
       target: 'type',
       passJson: false
@@ -82,9 +131,9 @@ const userOptions = {
       description: 'Replace objects with complex types',
       optionKeyLabel: 'Pattern',
       optionValueLabel: 'Replacement',
-      values: [],
-      replace: function (target) {
-        genericReplacement(target, this.values)
+      userValues: [],
+      replaceTarget: function (target) {
+        return genericReplacement(target, this.userValues)
       },
       target: 'type',
       passJson: false
@@ -92,12 +141,12 @@ const userOptions = {
     {
       key: 'dynamicReplacement',
       header: 'Dynamic Replacement',
-      description: 'Replace objects with dynamic types stored in property values',
+      description: 'Replace objects with dynamic types stored in property userValues',
       optionKeyLabel: 'Target Property Pattern',
       optionValueLabel: 'Type Value Property Pattern',
-      values: [],
-      replace: function (target, json) {
-        dynamicReplacement(json, target, this.values)
+      userValues: [],
+      replaceTarget: function (target, json) {
+        return dynamicReplacement(json, target, this.userValues)
       },
       target: 'type',
       passJson: true

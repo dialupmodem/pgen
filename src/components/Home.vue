@@ -24,7 +24,6 @@ export default {
   data() {
     return {
       active: 0,
-      userJson: "{ \"test\" : 1 }",
       generatedCode: "",
       options: null,
       pocoModel: null
@@ -32,15 +31,16 @@ export default {
   },
   methods: {
     generateClass() {
-      this.pocoModel = new PocoModel("test", this.options);
-      this.generatedCode = this.options.templateFunctions.class(this.pocoModel);
+      this.pocoModel = new PocoModel("test", this.options)
+      console.log(this.pocoModel)
+      this.generatedCode = this.classTemplate(this.pocoModel)
     },
     userJsonChange() {
       this.options.userJson = this.userJson
-      this.generateClass();
+      this.generateClass()
     },
     tabChange() {
-      this.generateClass();
+      this.generateClass()
     },
     optionsChange(updatedOptions) {
       this.options = updatedOptions
@@ -140,7 +140,14 @@ export default {
         "Url": "/ChocoboTaxiStand/1179648"
       }`
     }
-    
+  },
+  computed: {
+    classTemplate() {
+      return this.options.templates.class
+    },
+    userJson() {
+      return this.options.userJson
+    }
   }
 }
 

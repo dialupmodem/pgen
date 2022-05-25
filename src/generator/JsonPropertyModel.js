@@ -5,7 +5,9 @@ export default class JsonPropertyModel {
 
     this.propertyType = typeof (this.propertyValue)
     this.options = options
-    this.json = JSON.parse(options.userJson)
+    this.targetType = options.userOptions.defaultComplexType
+
+    this.json = JSON.parse(this.options.userJson)
 
     this._processReplacements()
   }
@@ -15,11 +17,10 @@ export default class JsonPropertyModel {
       .filter(o => o.target == 'name')
 
     if (nameReplacementOptions) {
-      let nameReplacementEntries = nameReplacementOptions.values
       let nameResult = null
 
-      nameReplacementEntries.forEach(r => {
-        nameResult = r.replace(this.propertyName, r.passJson ? this.options.userJson : null)
+      nameReplacementOptions.forEach(r => {
+        nameResult = r.replaceTarget(this.propertyName, this.passJson ? this.json : null)
       })
 
       this.formattedPropertyName = nameResult ?? this.propertyName
@@ -29,14 +30,15 @@ export default class JsonPropertyModel {
       .filter(o => o.target == 'type')
 
     if (typeReplacementOptions) {
-      let typeReplacementEntries = typeReplacementOptions.values
-      let typeResult = null
+      let typeResult = this.propertyType
 
-      typeReplacementEntries.forEach(r => {
-        typeResult = r.replace(this.targetType, r.passJson ? this.options.userJson : null)
+      typeReplacementOptions.forEach(r => {
+        typeResult = r.replaceTarget(typeResult, this.passJson ? this.json : null)
       })
 
-      this.targetType = typeResult ?? this.targetType
+      if (typeResult) {
+        this.targetType = typeResult
+      }
     }
   }
 }

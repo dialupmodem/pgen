@@ -22,7 +22,7 @@
     </div>
     <div class="col-12 grid">
       <div class="field col-6">
-        <DataTable :value="values" responsive-layout="scroll">
+        <DataTable :value="userValues" responsive-layout="scroll">
           <Column field="key" :header="optionKeyLabel"></Column>
           <Column field="value" :header="optionValueLabel"></Column>
         </DataTable>
@@ -75,8 +75,8 @@ export default {
     optionValueLabel() {
       return this.keyValueOption?.optionValueLabel
     },
-    values() {
-      return this.keyValueOption?.values
+    userValues() {
+      return this.keyValueOption?.userValues
     }
   }
 };
