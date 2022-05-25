@@ -7,7 +7,7 @@ export default class JsonPropertyModel {
     this.options = options
     this.targetType = options.userOptions.defaultComplexType
 
-    this.json = JSON.parse(this.options.userJson)
+    this.json = this.options.userJson
 
     this._processReplacements()
   }

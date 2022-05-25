@@ -32,7 +32,6 @@
 </template>
 
 <script>
-
 export default {
   name: "KeyValueOption",
   props: {
@@ -61,23 +60,23 @@ export default {
   },
   computed: {
     key() {
-      return this.keyValueOption?.key
+      return this.keyValueOption?.key;
     },
     header() {
-      return this.keyValueOption?.header
+      return this.keyValueOption?.header;
     },
     description() {
-      return this.keyValueOption?.description
+      return this.keyValueOption?.description;
     },
     optionKeyLabel() {
-      return this.keyValueOption?.optionKeyLabel
+      return this.keyValueOption?.optionKeyLabel;
     },
     optionValueLabel() {
-      return this.keyValueOption?.optionValueLabel
+      return this.keyValueOption?.optionValueLabel;
     },
     userValues() {
-      return this.keyValueOption?.userValues
-    }
-  }
+      return this.keyValueOption?.userValues;
+    },
+  },
 };
 </script>

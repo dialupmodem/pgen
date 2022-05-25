@@ -4,7 +4,7 @@ export default class PocoModel {
   constructor(options) {
     this.options = options
     this.className = this.options.userOptions.className
-    this.json = JSON.parse(this.options.userJson)
+    this.json = this.options.userJson
 
     this._setName()
     this._setProperties()
