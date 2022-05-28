@@ -7,10 +7,7 @@
           <OptionInput
             v-for="userOption in localOptions.userOptions.generic"
             :key="userOption.key"
-            :optionKey="userOption.key"
-            :optionValue="userOption.value"
-            :label="userOption.label"
-            :inputType="userOption.inputType"
+            :userOption="userOption"
             @optionChange="updateOptions"
           >
           </OptionInput>

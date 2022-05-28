@@ -33,6 +33,19 @@ const dynamicReplacement = (target, jsonProperty, replacementEntries) => {
   return result
 }
 
+// const defaultSelection = (selection) => {
+//   return selection.find(s => s.default) ?? null
+// }
+const genericReplaceSample = (value, exampleName) => {
+  if (!exampleName) {
+    exampleName = 'ExamplePropertyName'
+  }
+  let regex = new RegExp(`(${exampleName})`)
+  let sample = exampleName.replace(regex, value)
+
+  return `${exampleName} -> ${sample}`
+}
+
 const userOptions = {
   getValue: function (key) {
     let option = this.generic.find(g => g.key == key)
@@ -68,7 +81,10 @@ const userOptions = {
       key: 'complexPropertyTemplate',
       value: '$1Model',
       label: 'Complex Property Template',
-      inputType: 'text'
+      inputType: 'text',
+      sampleValue: function () {
+        return genericReplaceSample(this.value)
+      }
     },
     {
       key: 'baseClass',
@@ -87,6 +103,26 @@ const userOptions = {
       value: 'object',
       label: 'Default Complex Type',
       inputType: 'text'
+    },
+    {
+      key: 'attributeTemplate',
+      value: '[Column("$1")]',
+      label: 'Attribute Template',
+      inputType: 'text',
+      sampleValue: function () {
+        return genericReplaceSample(this.value)
+      }
+    },
+    {
+      key: 'attributeMode',
+      label: 'Attribute Mode',
+      inputType: 'dropdown',
+      selection: [
+        { label: 'All Properties', value: 'all' },
+        { label: 'Only Renamed Properties', value: 'onlyRenamed' },
+        { label: 'None', value: 'none' }
+      ],
+      value: 'onlyRenamed'
     }
   ],
   keyValue: [
