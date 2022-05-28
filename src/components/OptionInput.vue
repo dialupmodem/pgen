@@ -13,7 +13,7 @@
     }}</span>
   </div>
   <div class="field col-12 grid mb-5" v-if="isSwitchInput">
-    <div class="col-2" style="width: 125px; padding-top: 0.25rem">
+    <div class="col-2" style="width: 150px; padding-top: 0.25rem">
       {{ localOption.label }}
     </div>
     <div class="col-1">

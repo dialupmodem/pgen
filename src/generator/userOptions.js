@@ -33,9 +33,6 @@ const dynamicReplacement = (target, jsonProperty, replacementEntries) => {
   return result
 }
 
-// const defaultSelection = (selection) => {
-//   return selection.find(s => s.default) ?? null
-// }
 const genericReplaceSample = (value, exampleName) => {
   if (!exampleName) {
     exampleName = 'ExamplePropertyName'
@@ -45,6 +42,7 @@ const genericReplaceSample = (value, exampleName) => {
 
   return `${exampleName} -> ${sample}`
 }
+
 
 const userOptions = {
   getValue: function (key) {
@@ -69,6 +67,15 @@ const userOptions = {
   },
   get defaultComplexType() {
     return this.getValue('defaultComplexType')
+  },
+  get attributeMode() {
+    return this.getValue('attributeMode')
+  },
+  get attributeTemplate() {
+    return this.getValue('attributeTemplate')
+  },
+  get useNullableTypes() {
+    return this.getValue('useNullableTypes')
   },
   generic: [
     {
@@ -96,6 +103,12 @@ const userOptions = {
       key: 'useBaseClass',
       value: true,
       label: 'Use Base Class',
+      inputType: 'switch'
+    },
+    {
+      key: 'useNullableTypes',
+      value: true,
+      label: 'Use Nullable Types',
       inputType: 'switch'
     },
     {

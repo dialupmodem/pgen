@@ -6,7 +6,6 @@ export default class JsonPropertyModel {
     this.propertyType = typeof (this.propertyValue)
     this.options = options
     this.targetType = options.userOptions.defaultComplexType
-
     this.json = this.options.userJson
 
     this._processReplacements()
@@ -55,5 +54,8 @@ export default class JsonPropertyModel {
         this.targetType = typeResult
       }
     }
+  }
+  get isRenamed() {
+    return this.formattedPropertyName != this.propertyName
   }
 }
